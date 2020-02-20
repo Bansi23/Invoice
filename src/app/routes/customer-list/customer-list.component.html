@@ -1,0 +1,179 @@
+<div class="row">
+  <div class="col col-md-12 col-lg-12">
+    <h2>Customer List</h2>
+  </div>
+</div>
+<div class="mx-5 my-5">
+  <div class="row form-group">
+    <div class="col col-lg-12">
+      <button class="btn btn-info btn-sm" (click)="AddRecord()" [disabled]="updateIndex > -1 ? true : false"><i
+          class="fa fa-plus"></i>&nbsp; Add</button>&nbsp;
+      <button class="btn btn-danger btn-sm pull-right" (click)="deleteAll()"
+        [disabled]="updateIndex > -1 ? true : false"><i class="fa fa-trash"></i>&nbsp;Delete
+        All</button>
+    </div>
+  </div>
+
+  <form [formGroup]="customerForm">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped ">
+        <tr>
+          <th colspan="12" style="text-align: center">
+            <h6>CUSTOMER LIST</h6>
+          </th>
+        </tr>
+        <tr>
+          <th>Customer Name</th>
+          <th>Mobile No.</th>
+          <th>E-mail</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+        <tbody>
+          <tr *ngFor="let tabledata of lstCustomerData; let i=index">
+            <ng-container *ngIf="updateIndex != i; else elseTemplate">
+              <td>{{ tabledata.cname | titlecase}}</td>
+              <td>{{ tabledata.mono}}</td>
+              <td>{{ tabledata.mail | lowercase }}</td>
+              <td>{{ tabledata.address }}</td>
+
+              <td>
+                <button type="button" class="btn-btn-success btn-sm mx-2" (click)="editRecord(i)"
+                  [disabled]="updateIndex > -1 ? true : false "><i class="fa fa-edit"></i></button>
+
+                <button class="btn btn-danger btn-sm" [disabled]="updateIndex > -1 ? true : false"
+                  (click)="DeleteRecord(tabledata.id)"><i class="fa fa-trash"></i></button>
+              </td>
+            </ng-container>
+            <ng-template #elseTemplate>
+              <td><input type="text" class="form-control" [(ngModel)]="tabledata.cname" formControlName="cname">
+                <span class="text-danger"
+                  *ngIf="customerForm.get('cname').hasError('required') && customerForm.get('cname').touched ">
+                  Customer Name is required
+                </span>
+              </td>
+
+              <td><input type="text" class="form-control" [(ngModel)]="tabledata.mono" formControlName="mono">
+                <span class="text-danger"
+                  *ngIf="customerForm.get('mono').hasError('required') && customerForm.get('mono').touched ">
+                  Mobile No. is required
+                </span>
+                <span class="text-danger"
+                  *ngIf="customerForm.get('mono').hasError('pattern') && customerForm.get('mono').touched ">
+                  Enter Valid Number
+                </span>
+              </td>
+
+
+              <td><input type="email" class="form-control" [(ngModel)]="tabledata.mail" formControlName="mail">
+                <span class="text-danger"
+                  *ngIf="customerForm.get('mail').hasError('required') && customerForm.get('mail').touched ">
+                  Mail is required
+                </span>
+                <span class="text-danger"
+                  *ngIf="customerForm.get('mail').hasError('pattern') && customerForm.get('mail').touched ">
+                  Enter valid mail
+                </span>
+              </td>
+
+              <td><input type="text" class="form-control" [(ngModel)]="tabledata.address" formControlName="address">
+                <span class="text-danger"
+                  *ngIf="customerForm.get('address').hasError('required') && customerForm.get('address').touched ">
+                  Address is required
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-dark  btn-sm" (click)="saveChange(i)"><i class="fa fa-save"></i></button>
+                &nbsp;&nbsp;
+                <button type="button" class="btn btn-warning btn-sm " (click)="cancelEdit(i)"><i
+                    class="fa fa-times"></i></button>
+              </td>
+            </ng-template>
+          </tr>
+
+          <tr *ngIf="lstCustomerData?.length == 0">
+            <td colspan="12">
+              No Record found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Modal fade -->
+      <div class="modal fade" #addRecord="bs-modal" bsModal role="dialog">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Add Record</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+                <span aria-hidden="true" class="text-white">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label for="name"><b>First Name</b></label>
+                    <input class="form-control" formControlName="cname" type="text">
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('cname').hasError('required') && customerForm.get('cname').touched ">
+                      Customer Name is required
+                    </span>
+                  </div>
+                </div>
+
+                <div class="col col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label for="dob"><b>Mobile No.</b></label>
+                    <input class="form-control " maxlength="10" formControlName="mono" type="text">
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('mono').hasError('required') && customerForm.get('mono').touched ">
+                      Mobile Name is required
+                    </span>
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('mono').hasError('pattern') && customerForm.get('mono').touched ">
+                      Enter Valid Number
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label for="dob"><b>E-mail</b></label>
+                    <input class="form-control " formControlName="mail" type="email">
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('mail').hasError('required') && customerForm.get('mail').touched ">
+                      Email is required
+                    </span>
+
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('mail').hasError('pattern') && customerForm.get('mail').touched ">
+                      Please Enter Valid mail address
+                    </span>
+                  </div>
+                </div>
+                <div class="col col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label for="dob"><b>Address</b></label>
+                    <input class="form-control " formControlName="address" type="email">
+                    <span class="text-danger"
+                      *ngIf="customerForm.get('address').hasError('required') && customerForm.get('address').touched ">
+                      Address is required
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-danger float-left btn-sm" (click)="close()">Close</button>
+              <button class="btn btn-primary btn-sm" (click)="add_Record()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- modal end -->
+    </div>
+  </form>
+</div>

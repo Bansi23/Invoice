@@ -1,0 +1,16 @@
+@import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css";
+
+
+
+.some {
+  width: 100%;
+  height: 100%;
+}
+
+.some-css {
+  overflow: hidden;
+}
+.btn {
+  font-size: 6px !important;
+}
+

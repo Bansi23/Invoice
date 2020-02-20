@@ -1,0 +1,135 @@
+<div class="row">
+    <div class="col col-md-12 col-lg-12">
+        <h2>Invoices List</h2>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped ">
+    <tr>
+        <th colspan="12" style="text-align: center">
+            <h6>ITEM LIST</h6>
+        </th>
+    </tr>
+    <tr>
+        <th>Invoices Date</th>
+        <th>Invoice#</th>
+        <th>Order Number</th>
+        <th>Customer Name</th>
+        <th>Due Date</th>
+        <th>Amount</th>
+        <th>Action</th>
+    </tr>
+
+    <tbody>
+        <tr *ngFor="let lstIn of lstInvoices let i = index">
+            <td>{{lstIn.indate | date:'MM/dd/yyyy'}}</td>
+            <td><button class="btn btn-link" (click)="invoiceLink(lstIn.invoices)">IN{{lstIn.invoices}}</button> </td>
+            <td>{{lstIn.orderno}}</td>
+            <td>{{lstIn.cname.cname | titlecase }}</td>
+            <td>{{lstIn.duedate | date:'MM/dd/yyyy' }}</td>
+            <td><i class="fas fa-dollar-sign"></i>{{lstIn.totalAmount | number:'2.2-2'}}</td>
+            <td> <button type="button" class="btn btn-success btn-sm mx-2" (click)="editRecord(i)"><i
+                        class="fa fa-edit"></i></button></td>
+        </tr>
+
+        <tr *ngIf="lstInvoices?.length == 0 ">
+            <td colspan="7">No record Found</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Modal fade -->
+<div class="modal fade" #invoiceDetails="bs-modal" bsModal role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Invoice Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="close()">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngFor="let inDetails of invoice">
+                    <h6>Basic Details</h6>
+                    <div class="row">
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Invoice Number : </b></label>
+                            <span class="mx-2">{{inDetails?.invoices}}</span>
+                        </div>
+
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Customer Name :</b></label>
+                            <span class="mx-2">{{inDetails?.cname.cname}}</span>
+                        </div>
+
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Invoice Date :</b></label>
+                            <span class="mx-2">{{inDetails?.indate | date : 'dd/MM/yyyy'}}</span>
+                        </div>
+
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Due Date :</b></label>
+                            <span class="mx-2">{{inDetails?.duedate  | date : 'dd/MM/yyyy'}}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="mt-3">Item Details</h6>
+                    <div *ngFor="let accountDetail of inDetails.itemRows">
+                        <div class=" row">
+                            <div class="col col-md-3 mt-2">
+                                <label><b>Item Name : </b></label>
+                                <span class="mx-2">{{accountDetail?.iname}}</span>
+                            </div>
+
+                            <div class="col col-md-3 mt-2">
+                                <label><b>Quantity :</b></label>
+                                <span class="mx-2">{{accountDetail?.quantity}}</span>
+                            </div>
+
+                            <div class="col col-md-3 mt-2">
+                                <label><b>Rate :</b></label>
+                                <span class="mx-2"><i class="fas fa-dollar-sign"></i>{{accountDetail?.rate  | number:'2.2-2'}}</span>
+                            </div>
+
+                            <div class=" col col-md-3 mt-2">
+                                <label><b>Amount :</b></label>
+                                <span class="mx-2"><i class="fas fa-dollar-sign"></i>{{accountDetail?.amount | number:'2.2-2'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class=" mt-3 row right-box">
+                        <label><b>Sub Total :</b></label>
+                        <span class="mx-2"><i class="fas fa-dollar-sign"></i>{{total | number:'2.2-2'}}</span>
+                    </div>
+                    <hr>
+                    <h6 class="mt-3">Amount Details</h6>
+                    <div class="row">
+                        <div class="col col-md-4 mt-2">
+                            <label><b>Order No. :</b></label>
+                            <span class="mx-2">{{inDetails?.orderno}}</span>
+                        </div>
+
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Shipping Charge :</b></label>
+                            <span class="mx-2" *ngIf="!inDetails?.shippingCharge">0</span>
+                            <span class="mx-2" *ngIf="inDetails?.shippingCharge">+{{inDetails?.shippingCharge | number:'2.2-2'}}</span>
+                        </div>
+
+                        <div class="col col-md-2 mt-2">
+                            <label><b>Discount :</b></label>
+                            <span class="mx-2" *ngIf="inDetails?.discount">-{{inDetails?.discount | number:'2.2-2'}}% </span>
+                            <span class="mx-2" *ngIf="!inDetails?.discount">0 </span>
+                        </div>
+
+                        <div class="col col-md-3 mt-2">
+                            <label><b>Total Amount :</b></label>
+                            <span class="mx-2"><i class="fas fa-dollar-sign"></i>{{inDetails?.totalAmount | number:'2.2-2'}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal end -->

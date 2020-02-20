@@ -1,0 +1,220 @@
+<div class="row">
+    <div class="col col-md-12 col-lg-12">
+        <h2>Create Invoices</h2>
+    </div>
+</div>
+<div class="mx-5 my-5">
+    <form [formGroup]="invoicesForm">
+        <div class="row">
+            <div class="col col-md-2 col-lg-2 col-sm-12">
+                <label>Customer Name</label>
+            </div>
+            <div class="col col-md-8 col-lg-10 col-sm-12">
+                <select formControlName="cname" class="form-control">
+                    <option value=''>Select Customer</option>
+                    <option *ngFor="let cname of Customer" [ngValue]="cname">{{cname.cname}}</option>
+                </select>
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('cname').hasError('required') && invoicesForm.get('cname').touched ">
+                    Select Customer
+                </span>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col col-md-2 col-lg-2 col-sm-12">
+                <label>Invoices#</label>
+            </div>
+            <div class="col col-md-5 col-lg-6 col-sm-11">
+                <input type="text" class="form-control" formControlName="invoices" maxlength="6"
+                    [readonly]="!readonlyText">
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('invoices').hasError('required') && invoicesForm.get('invoices').touched ">
+                    Required Invoice Number
+                </span>
+
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('invoices').hasError('pattern') && invoicesForm.get('invoices').touched ">
+                    Enter valid Invoice Number
+                </span>
+            </div>
+            <div class="col col-md-1 col-lg-1 col-sm-1">
+
+                <label class="c-checkbox">
+                    <input type="checkbox" (change)="autoGenerate($event.target.checked)" formControlName="isAuto">
+                    <span class="fa fa-check"></span>
+                </label>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col col-md-2 col-lg-2 col-sm-12">
+                <label>Order Number</label>
+            </div>
+            <div class="col col-md-6 col-lg-6 col-sm-12">
+                <input type="text" class="form-control" formControlName="orderno" maxlength="16"
+                    ng-pattern-restrict="^[A-Za-z0-9]*$">
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('orderno').hasError('required') && invoicesForm.get('orderno').touched ">
+                    Required Order Number
+                </span>
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('orderno').hasError('pattern') && invoicesForm.get('orderno').touched ">
+                    Enter Valid Order Number
+                </span>
+
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col col-md-1 col-lg-2 col-sm-12">
+                <label>Invoices Date</label>
+            </div>
+            <div class="col col-md-6 col-lg-6 col-sm-12">
+                <input type="text" class="form-control date" autocomplete="off" formControlName="indate" bsDatepicker
+                    #dp="bsDatepicker" name="dp-basic" placeholder="Select Date" readonly
+                    (bsValueChange)="onInvoicesChange($event)" [maxDate]="maxDate">
+
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('indate').hasError('required') && invoicesForm.get('indate').touched ">Required
+                    Invoice Date
+                </span>
+            </div>
+
+            <div class="col col-md-1 col-lg-1 col-sm-12">
+                <label>Due Date</label>
+            </div>
+            <div class="col col-md-3 col-lg-3 col-sm-12">
+                <input type="text" class="form-control date" placeholder="Select Date" readonly
+                    formControlName="duedate" #dp="bsDatepicker" bsDatepicker bsValue="bsValue"
+                    (bsValueChange)="onDueChange($event)" [minDate]="minDate">
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('duedate').hasError('required') && invoicesForm.get('duedate').touched ">
+                    Required Due Date
+                </span>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <div class="row">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Item Details</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container formArrayName="itemRows">
+                            <tr *ngFor="let itemrow of itemRows.controls; let i=index"
+                                [formGroupName]="i">
+                                <td><select class="form-control" formControlName="iname"
+                                        (change)="selectVal($event.target.value,i )">
+                                        <option *ngFor="let lstItem of Item" [value]="lstItem.iname">
+                                            {{lstItem.iname}}</option>
+                                    </select></td>
+                                <td>
+                                    <input type="text" class="form-control" formControlName="quantity"
+                                        (keyup)="valuechange($event.target.value , i)" maxlength="10"
+                                        onkeypress="return (event.charCode == 8 && event.charCode == 0) ? null : event.charCode >= 48 && event.charCode <= 57">
+                                    <span class="text-danger"
+                                        *ngIf="itemrow.get('quantity').hasError('required') && itemrow.get('quantity').touched ">
+                                        Required Quantity
+                                    </span>
+                                </td>
+                                <td>{{itemrow.value.rate | number:'2.2-2' }}</td>
+                                <td>{{itemrow.value.amount | number:'2.2-2'}} </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" (click)="DeleteRecord(i)"><i
+                                            class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <br>
+
+            </div>
+            <div class="row">
+                <div class="col col-md-12 col-lg-12">
+                    <button (click)="addNewRow()" class="btn btn-link"><i class="fa fa-plus"></i>&nbsp;Add Other
+                        Record</button>
+                </div>
+
+            </div>
+            <div class="row mt-1">
+                <div class="col col-lg-6 offset-md-4 col-sm-12">
+                    <label class="right-box">SubTotal</label>
+                    <span>{{total | number:'2.2-2'}}</span>
+                </div>
+            </div>
+
+            <div class="row mt-1">
+                <div class="col col-md-2  offset-md-4 col-sm-2">
+                    <label> Discount</label>
+                </div>
+                <div class="col col-md-2 col-lg-2 col-sm-4">
+                    <input type="text" class="form-control" formControlName="discount" (keyup)="TotalAmount()">
+                </div>
+                
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('discount').hasError('pattern') && invoicesForm.get('discount').touched ">
+                    Enter Only pogitive digit
+                </span>
+                <div class="col col-md-2 col-lg-2 col-sm-4">
+                    <select class="form-control drop-box" (change)="selectcurrency()" formControlName="currencyCode">
+                        <option *ngFor="let currency of currencyCode" [value]='currency.name'> {{currency.name}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col col-md-2 col-lg-2 col-sm-2">
+                    <span class="mx-2" *ngIf="discount_amount">-{{discount_amount | number:'2.2-2'}} </span>
+                </div>
+            </div>
+
+            <div class="row mt-1">
+                <div class="col col-md-2 offset-md-4 col-sm-12">
+                    <label> Shipping Charges</label>
+                </div>
+                <div class="col col-md-2 col-lg-2 col-sm-4">
+                    <input type="text" class="form-control" formControlName='shippingCharge' (keyup)="TotalAmount()">
+                </div>
+
+                <span class="text-danger"
+                    *ngIf="invoicesForm.get('shippingCharge').hasError('pattern') && invoicesForm.get('shippingCharge').touched ">
+                    Enter Only pogitive digit
+                </span>
+                <div class="col col-md-2 col-lg-2 col-sm-4">
+                    <span class="mx-2" *ngIf="shipping_charge">+{{shipping_charge | number:'2.2-2'}} </span>
+                </div>
+            </div>
+
+            <div class="row mt-1">
+                <div class="col col-md-2  offset-md-6 col-sm-6">
+                    <label> Total Amount</label>
+                </div>
+
+                <div class="col col-md-4 col-lg-4 col-sm-6">
+                    <input type="number" class="form-control fas fa-rupee-sign" [readonly]="!totalAmountRead"
+                        formControlName="totalAmount" >
+                    <span class="text-danger"
+                        *ngIf="invoicesForm.get('totalAmount').hasError('required') && invoicesForm.get('totalAmount').touched ">
+                        Not valid Amount of 0
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row float-right mt-5">
+            <button *ngIf="edit" class="btn btn-info" (click)="invoiceData()"><i class="fa fa-plus"></i>&nbsp;Create
+                Invoices</button>
+
+            <button *ngIf="!edit" class="btn btn-success" (click)="editRec(invno)"><i
+                    class="fa fa-edit"></i>&nbsp;Change
+                Invoices</button>
+        </div>
+    </form>
+</div>
